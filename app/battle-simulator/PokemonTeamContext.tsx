@@ -20,7 +20,7 @@ interface Pokemon {
   };
   moves: Move[];
   selectedMoves: Move[];
-  types: string[];
+  types: { type: { name: string } }[];
 }
 
 interface Move {

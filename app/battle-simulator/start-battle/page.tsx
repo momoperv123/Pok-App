@@ -208,7 +208,7 @@ export default function StartBattlePage() {
     >
       <Navbar />
       <div className="flex justify-center items-start py-16">
-        <div className="flex w-full max-w-7xl mt-16 flex-wrap">
+        <div className="flex w-full max-w-7xl mt-16 flex-wrap md:flex-nowrap">
           <div
             className="bg-gray-800 opacity-75 p-4 rounded-lg shadow-lg w-full md:w-1/4 mr-4 overflow-y-scroll no-scrollbar"
             style={{
@@ -229,7 +229,7 @@ export default function StartBattlePage() {
           </div>
 
           <div className="p-8 rounded-lg shadow-lg w-full md:w-3/4">
-            <div className="flex justify-between items-center mb-8 flex-wrap">
+            <div className="flex justify-between items-center mb-8 flex-wrap md:flex-nowrap">
               <div className="text-center w-full md:w-1/2 mb-4 md:mb-0">
                 {playerPokemon && (
                   <>
