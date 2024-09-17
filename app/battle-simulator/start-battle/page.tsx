@@ -35,23 +35,33 @@ export default function StartBattlePage() {
   }, [playerHP, opponentHP]);
 
   const handleMoveSelect = (move: Move) => {
-    if (isPlayerTurn) {
+    if (isPlayerTurn && playerPokemon && opponentPokemon) {
+      // Calculate damage with safety checks
       // @ts-expect-error: Type mismatch with Pokemon types, ignoring for battle logic
       const damage = calculateDamage(move, playerPokemon, opponentPokemon);
+
       if (!isNaN(damage)) {
         setOpponentHP((prevHP) => Math.max(prevHP - damage, 0));
-        const logEntry = `${playerPokemon.name} uses ${move.name} for ${damage} points of damage on ${opponentPokemon.name}`;
+
+        const logEntry = `${playerPokemon?.name ?? "Unknown Pokémon"} uses ${
+          move.name
+        } for ${damage} points of damage on ${
+          opponentPokemon?.name ?? "Unknown Pokémon"
+        }`;
         setMoveLog((prevLog) => [...prevLog, logEntry]);
         setBattleText(logEntry);
       } else {
-        const logEntry = `${playerPokemon.name} missed the move!`;
+        const logEntry = `${
+          playerPokemon?.name ?? "Unknown Pokémon"
+        } missed the move!`;
         setMoveLog((prevLog) => [...prevLog, logEntry]);
         setBattleText(logEntry);
       }
+
       setIsPlayerTurn(false);
 
       setTimeout(() => {
-        if (opponentHP - damage <= 0) {
+        if ((opponentHP ?? 0) - damage <= 0) {
           handleOpponentFaint();
         } else {
           handleOpponentTurn();
