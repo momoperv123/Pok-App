@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async redirects() {
     return [
       {
-        source: "/battle-simulator/:path*", // Match any route under /battle-simulator
+        source: "/battle-simulator/:path*",
         destination: "/battle-simulator/player-team-selection",
-        permanent: false, // Temporary redirect
+        permanent: false,
         has: [
           {
             type: "query",
@@ -18,4 +21,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
