@@ -41,7 +41,6 @@ const getTypeColorClass = (type: string): string => {
 const MoveSelector: React.FC<MoveSelectorProps> = ({
   availableMoves = [],
   onMoveSelect,
-  level,
 }) => {
   // Filter out non-attacking moves (i.e., moves with power <= 0 or "N/A")
   const attackingMoves = availableMoves.filter(
