@@ -1,101 +1,93 @@
-import Image from "next/image";
+"use client";
+
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+import Navbar from "./Navbar";
+import { OrbitControls } from "@react-three/drei";
+import * as THREE from "three";
+import Background from "./public/images/home.gif";
+
+function Pokeball() {
+  const group = useRef<THREE.Group>(null);
+  const targetRotation = useRef({ x: 0, y: 0 });
+
+  useFrame(({ mouse }) => {
+    if (group.current) {
+      const xRotation = (mouse.x * 0.3 - targetRotation.current.y) * 0.1;
+      const yRotation = (-mouse.y * 0.3 - targetRotation.current.x) * 0.1;
+
+      targetRotation.current.y += xRotation;
+      targetRotation.current.x += yRotation;
+
+      group.current.rotation.x = targetRotation.current.x;
+      group.current.rotation.y = targetRotation.current.y;
+    }
+  });
+
+  // Assign vertex colors to the geometry
+  const geometry = new THREE.SphereGeometry(1, 64, 64);
+  const colors = [];
+
+  for (let i = 0; i < geometry.attributes.position.count; i++) {
+    const y = geometry.attributes.position.getY(i);
+    if (y > 0) {
+      colors.push(2, 0, 0); // Red for the top half
+    } else {
+      colors.push(2, 2, 2); // White for the bottom half
+    }
+  }
+
+  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+
+  return (
+    <group ref={group} scale={2}>
+      {/* Sphere with Red and White Halves */}
+      <mesh geometry={geometry}>
+        <meshStandardMaterial
+          vertexColors={true}
+          roughness={0.2} // Shine
+          metalness={0.3} // Reflective
+        />
+      </mesh>
+
+      <mesh position={[0, 0, 0]}>
+        <cylinderGeometry args={[1.01, 1.01, 0.1, 64]} />
+        <meshStandardMaterial color="black" roughness={0.5} metalness={1} />
+      </mesh>
+
+      <mesh position={[0, 0, 1]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.2, 0.2, 0.05, 32]} />
+        <meshStandardMaterial color="white" roughness={0.1} metalness={0.6} />
+      </mesh>
+
+      <mesh position={[0, 0, 1]} rotation={[0, 0, 0]}>
+        <torusGeometry args={[0.22, 0.03, 16, 100]} />
+        <meshStandardMaterial color="black" roughness={0.5} metalness={1} />
+      </mesh>
+    </group>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <>
+      <Navbar />
+      <div
+        className="flex justify-center items-start h-screen py-12"
+        style={{
+          backgroundImage: `url(${Background.src})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <Canvas className="w-full h-full max-w-lg max-h-lg">
+          <ambientLight intensity={0.3} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          <directionalLight position={[-5, 5, 5]} intensity={0.5} />
+          <Pokeball />
+          <OrbitControls enableZoom={false} />
+        </Canvas>
+      </div>
+    </>
   );
 }
