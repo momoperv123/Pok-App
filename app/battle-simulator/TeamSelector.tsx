@@ -32,7 +32,7 @@ interface Pokemon {
   };
   moves: Move[];
   selectedMoves: Move[];
-  types: { type: { name: string } }[];
+  types: string[];
 }
 
 const TeamSelector: React.FC<{ isPlayer: boolean; onSaveTeam: () => void }> = ({
