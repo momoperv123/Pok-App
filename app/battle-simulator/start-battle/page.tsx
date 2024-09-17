@@ -16,8 +16,9 @@ export default function StartBattlePage() {
   const [opponentPokemon, setOpponentPokemon] = useState(
     currentOpponentTeam[0]
   );
-  const [playerHP, setPlayerHP] = useState(playerPokemon.stats.hp);
-  const [opponentHP, setOpponentHP] = useState(opponentPokemon.stats.hp);
+
+  const [playerHP, setPlayerHP] = useState(playerPokemon?.stats?.hp ?? 0);
+  const [opponentHP, setOpponentHP] = useState(opponentPokemon?.stats?.hp ?? 0);
   const [battleText, setBattleText] = useState("A wild battle has begun!");
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [showSwitchMenu, setShowSwitchMenu] = useState(false);
