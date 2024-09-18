@@ -246,30 +246,27 @@ export default function StartBattlePage() {
     );
   }
 
+  // Add this function before your return statement
+  const getHPBarColor = (hp, maxHp) => {
+    const hpPercentage = (hp / maxHp) * 100;
+    if (hpPercentage > 50) return "bg-green-500";
+    if (hpPercentage > 20) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
   return (
     <div
-      style={{
-        backgroundImage: `url(${Background.src})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-      }}
-      className="bg-gray-800 min-h-screen text-xs text-white"
+      className="bg-cover bg-center min-h-screen text-xs text-white"
+      style={{ backgroundImage: `url(${Background.src})` }}
     >
       <Navbar />
       <div className="flex justify-center items-start py-16">
-        <div className="flex w-full max-w-7xl mt-16 flex-wrap md:flex-nowrap">
-          <div
-            className="bg-gray-800 opacity-75 p-4 rounded-lg shadow-lg w-full md:w-1/4 mr-4 overflow-y-scroll no-scrollbar"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            <h2 className="opacity-100 text-lg font-semibold mb-2">Move Log</h2>
+        <div className="flex w-full max-w-7xl mt-16 flex-col md:flex-row">
+          <div className="bg-gray-800 opacity-75 p-4 rounded-lg shadow-lg w-full md:w-1/4 md:mr-4 overflow-y-scroll">
+            <h2 className="text-lg font-semibold mb-2">Move Log</h2>
             <div className="h-96">
               {moveLog.map((logEntry, index) => (
-                <p key={index} className="text-xs">
+                <p key={index} className="text-sm">
                   {logEntry}
                   <br />
                   <br />
@@ -278,15 +275,21 @@ export default function StartBattlePage() {
             </div>
           </div>
 
-          <div className="p-8 rounded-lg shadow-lg w-full md:w-3/4">
-            <div className="flex justify-between items-center mb-8 flex-wrap md:flex-nowrap">
+          {/* Updated Battle Area */}
+          <div className="bg-gray-800 bg-opacity-50 p-8 rounded-lg shadow-lg w-full md:w-3/4">
+            <div className="flex justify-between items-start mb-8 flex-col md:flex-row">
+              {/* Player's Pokémon */}
               <div className="text-center w-full md:w-1/2 mb-4 md:mb-0">
+                <h3 className="text-green-500 text-lg font-semibold mb-2">
+                  You
+                </h3>
                 {playerPokemon && (
                   <>
                     <img
                       src={playerPokemon.sprites.front_default}
                       alt={playerPokemon.name}
                       className="w-36 h-36 mx-auto"
+                      loading="lazy"
                     />
                     <div className="font-bold text-xl mt-2">
                       {playerPokemon.name} (Lv {playerPokemon.level})
@@ -296,24 +299,34 @@ export default function StartBattlePage() {
                     </div>
                     <div className="w-full bg-gray-800 h-2 rounded mt-1">
                       <div
-                        className="bg-green-500 h-2 rounded"
+                        className={`h-2 rounded ${getHPBarColor(
+                          playerHP,
+                          playerPokemon.stats.hp
+                        )}`}
                         style={{
                           width: `${
                             (playerHP / playerPokemon.stats.hp) * 100
                           }%`,
+                          transition: "width 0.5s ease-in-out",
                         }}
                       />
                     </div>
                   </>
                 )}
               </div>
-              <div className="text-center w-full md:w-1/2">
+
+              {/* Opponent's Pokémon */}
+              <div className="text-center w-full md:w-1/2 mb-4 md:mb-0">
+                <h3 className="text-red-500 text-lg font-semibold mb-2">
+                  Opponent
+                </h3>
                 {opponentPokemon && (
                   <>
                     <img
                       src={opponentPokemon.sprites.front_default}
                       alt={opponentPokemon.name}
                       className="w-36 h-36 mx-auto"
+                      loading="lazy"
                     />
                     <div className="font-bold text-xl mt-2">
                       {opponentPokemon.name} (Lv {opponentPokemon.level})
@@ -323,11 +336,15 @@ export default function StartBattlePage() {
                     </div>
                     <div className="w-full bg-gray-800 h-2 rounded mt-1">
                       <div
-                        className="bg-red-500 h-2 rounded"
+                        className={`h-2 rounded ${getHPBarColor(
+                          opponentHP,
+                          opponentPokemon.stats.hp
+                        )}`}
                         style={{
                           width: `${
                             (opponentHP / opponentPokemon.stats.hp) * 100
                           }%`,
+                          transition: "width 0.5s ease-in-out",
                         }}
                       />
                     </div>
@@ -336,50 +353,62 @@ export default function StartBattlePage() {
               </div>
             </div>
 
-            <div className="bg-gray-700 p-4 rounded-lg text-center mb-4">
+            <div className="bg-black bg-opacity-60 p-4 rounded-lg text-center mb-4">
               <p className="text-lg font-semibold">{battleText}</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {isPlayerTurn &&
-                !showSwitchMenu &&
-                playerPokemon &&
-                playerPokemon.selectedMoves &&
-                playerPokemon.selectedMoves.map((move, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleMoveSelect(move)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-                  >
-                    {move.name}
-                  </button>
-                ))}
-              {isPlayerTurn && !showSwitchMenu && (
+
+            {isPlayerTurn && !showSwitchMenu && (
+              <div className="grid grid-cols-2 gap-4">
+                {playerPokemon &&
+                  playerPokemon.selectedMoves &&
+                  playerPokemon.selectedMoves.map((move, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleMoveSelect(move)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transform hover:scale-105 transition-transform duration-150"
+                      aria-label={`Select move ${move.name}`}
+                    >
+                      {move.name}
+                    </button>
+                  ))}
                 <button
                   onClick={() => setShowSwitchMenu(true)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded col-span-2"
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded col-span-2 focus:outline-none focus:ring-2 focus:ring-yellow-300 transform hover:scale-105 transition-transform duration-150"
                 >
                   Switch Pokémon
                 </button>
-              )}
-            </div>
+              </div>
+            )}
+
             {showSwitchMenu && (
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {currentPlayerTeam.map((pokemon, index) => (
                   <button
                     key={index}
                     onClick={() => handleSwitchPokemon(pokemon)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                    className={`text-white font-bold py-3 px-6 rounded ${
+                      pokemon === playerPokemon
+                        ? "bg-green-500 opacity-50 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600 transform hover:scale-105 transition-transform duration-150 focus:outline-none focus:ring-2 focus:ring-green-300"
+                    }`}
                     disabled={pokemon === playerPokemon}
+                    aria-disabled={pokemon === playerPokemon ? "true" : "false"}
                   >
                     {pokemon.name} (HP: {pokemon.stats.hp})
                   </button>
                 ))}
                 <button
                   onClick={() => setShowSwitchMenu(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded col-span-2"
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded w-full col-span-2 focus:outline-none focus:ring-2 focus:ring-gray-300 transform hover:scale-105 transition-transform duration-150"
                 >
                   Back
                 </button>
+              </div>
+            )}
+
+            {!isPlayerTurn && (
+              <div className="flex items-center justify-center mt-4">
+                <p className="text-white">Opponent is choosing a move...</p>
               </div>
             )}
           </div>
@@ -392,7 +421,7 @@ export default function StartBattlePage() {
             <div className="grid grid-cols-1 gap-4">
               <button
                 onClick={selectNewTeam}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-green-300 transform hover:scale-105 transition-transform duration-150"
               >
                 Play Again
               </button>

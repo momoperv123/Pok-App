@@ -386,7 +386,7 @@ const Pokedex: React.FC = () => {
                       {index < evolutionChain.length - 1 && (
                         <div className="flex flex-col items-center">
                           <span className="text-xs text-black mb-1">Lv.</span>
-                          <span className="text-xs font-bold">
+                          <span className="text-xs font-bold text-black">
                             {evolutionChain[index + 1].level || "?"}
                           </span>
                           <span className="text-sm text-black">→</span>
