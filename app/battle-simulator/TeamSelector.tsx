@@ -329,7 +329,7 @@ const TeamSelector: React.FC<{ isPlayer: boolean; onSaveTeam: () => void }> = ({
                     >
                       ×
                     </button>
-                    <span className="text-xs">
+                    <span className="text-black text-xs">
                       <strong>{move.name}</strong>
                       <br />
                       Power: {calculateDamage(move, pokemon, pokemon)}

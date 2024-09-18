@@ -81,7 +81,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Enter Pokémon name or ID"
-          className="px-4 py-2 border rounded-l w-full text-xs"
+          className="text-black px-4 py-2 border rounded-l w-full text-xs"
           aria-label="Search for Pokémon by name or ID"
         />
         <button
@@ -98,7 +98,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             <li
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
-              className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200"
+              className="text-black flex items-center px-4 py-2 cursor-pointer hover:bg-gray-200"
             >
               <span className="flex-grow">
                 {suggestion.name.charAt(0).toUpperCase() +

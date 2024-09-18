@@ -240,14 +240,16 @@ const Pokedex: React.FC = () => {
               &times;
             </button>
 
-            <h2 className="text-sm font-bold mb-2">
+            <h2 className="text-black text-sm font-bold mb-2">
               {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
             </h2>
-            <p className="text-gray-700 mb-2 text-xs">#{pokemon.id}</p>
+            <p className="text-black mb-2 text-xs">#{pokemon.id}</p>
 
             <div className="flex justify-center space-x-8 mb-4 text-xs">
               <div className="flex flex-col items-center">
-                <span className="font-bold mb-2 text-sm">Normal</span>
+                <span className="text-black font-bold mb-2 text-sm">
+                  Normal
+                </span>
                 <img
                   src={
                     isFrontNormal
@@ -260,7 +262,7 @@ const Pokedex: React.FC = () => {
                 />
               </div>
               <div className="flex flex-col items-center">
-                <span className="font-bold mb-2 text-sm">Shiny</span>
+                <span className="text-black font-bold mb-2 text-sm">Shiny</span>
                 <img
                   src={
                     isFrontShiny
@@ -288,27 +290,31 @@ const Pokedex: React.FC = () => {
             </div>
 
             {/* Entry Section */}
-            <p className="text-gray-700 mb-4 text-xs italic">
+            <p className="text-black mb-4 text-xs italic">
               {pokemon.flavor_text}
             </p>
 
             <div className="flex justify-center space-x-8 mb-4 text-xs">
               <div className="flex flex-col items-center">
-                <span className="font-bold mb-2 text-sm">Height</span>
+                <span className="text-black font-bold mb-2 text-sm">
+                  Height
+                </span>
                 <span className="text-gray-700">
                   {convertHeightToFeet(pokemon.height / 10)}
                 </span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="font-bold text-sm mb-2">Weight</span>
-                <span className="text-gray-700">
+                <span className="text-black font-bold text-sm mb-2">
+                  Weight
+                </span>
+                <span className="text-black">
                   {convertWeightToPounds(pokemon.weight / 10)} lbs
                 </span>
               </div>
             </div>
 
-            <h3 className="text-sm font-bold mb-2">Abilities</h3>
-            <p className="text-gray-700 mb-4 text-xs">
+            <h3 className="text-black text-sm font-bold mb-2">Abilities</h3>
+            <p className="text-black mb-4 text-xs">
               {pokemon.abilities
                 .map(
                   (a) =>
@@ -319,7 +325,7 @@ const Pokedex: React.FC = () => {
             </p>
 
             {/* Weaknesses Section */}
-            <h3 className="text-sm font-bold mb-2">Weaknesses</h3>
+            <h3 className="text-black text-sm font-bold mb-2">Weaknesses</h3>
             <div className="flex flex-wrap justify-center mb-4">
               {weaknesses.map((weakness, index) => (
                 <span
@@ -333,7 +339,7 @@ const Pokedex: React.FC = () => {
             </div>
 
             {/* Stats Section */}
-            <h3 className="text-sm font-bold mb-2">Stats</h3>
+            <h3 className="text-black text-sm font-bold mb-2">Stats</h3>
             <div className="flex justify-center space-x-4 mb-4">
               {pokemon.stats.map((stat, index) => (
                 <div key={index} className="flex flex-col items-center">
@@ -350,7 +356,7 @@ const Pokedex: React.FC = () => {
                       {statAbbreviations[stat.stat.name] || stat.stat.name}
                     </span>
                   </div>
-                  <span className="text-gray-700 text-xs mt-2">
+                  <span className="text-black text-xs mt-2">
                     {stat.base_stat}
                   </span>
                 </div>
@@ -360,7 +366,9 @@ const Pokedex: React.FC = () => {
             {/* Display Evolutions */}
             {evolutionChain.length > 1 && (
               <>
-                <h3 className="text-sm font-bold mb-2">Evolutions</h3>
+                <h3 className="text-black text-sm font-bold mb-2">
+                  Evolutions
+                </h3>
                 <div className="flex justify-center items-center space-x-2 mb-4">
                   {evolutionChain.map((evolution, index) => (
                     <React.Fragment key={index}>
@@ -370,20 +378,18 @@ const Pokedex: React.FC = () => {
                           alt={evolution.name}
                           className="w-20 h-20"
                         />
-                        <span className="text-gray-700 text-xs">
+                        <span className="text-black text-xs">
                           {evolution.name.charAt(0).toUpperCase() +
                             evolution.name.slice(1)}
                         </span>
                       </div>
                       {index < evolutionChain.length - 1 && (
                         <div className="flex flex-col items-center">
-                          <span className="text-xs text-gray-500 mb-1">
-                            Lv.
-                          </span>
+                          <span className="text-xs text-black mb-1">Lv.</span>
                           <span className="text-xs font-bold">
                             {evolutionChain[index + 1].level || "?"}
                           </span>
-                          <span className="text-sm text-gray-500">→</span>
+                          <span className="text-sm text-black">→</span>
                         </div>
                       )}
                     </React.Fragment>

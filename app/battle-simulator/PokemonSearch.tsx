@@ -97,7 +97,7 @@ const PokemonSearch: React.FC<PokemonSearchProps> = ({ onPokemonSelect }) => {
           value={searchTerm}
           onChange={handleSearchChange}
           placeholder="Search Pokémon by name or ID"
-          className="w-full p-2 border rounded text-sm bg-gray-200 placeholder-gray-700"
+          className="text-black w-full p-2 border rounded text-sm bg-gray-200 placeholder-gray-700"
         />
         <button
           onClick={handleSearchClick}
@@ -112,7 +112,7 @@ const PokemonSearch: React.FC<PokemonSearchProps> = ({ onPokemonSelect }) => {
             <li
               key={name}
               onClick={() => handleSelect(name)}
-              className="p-2 cursor-pointer hover:bg-gray-200 flex items-center justify-between"
+              className="text-black p-2 cursor-pointer hover:bg-gray-200 flex items-center justify-between"
             >
               <span>{name}</span>
               {sprite && (
