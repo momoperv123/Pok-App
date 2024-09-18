@@ -1,33 +1,9 @@
+// PokemonTeamContext.tsx
+
 "use client";
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
-import { Difficulty } from "./types";
-
-interface Pokemon {
-  id: number;
-  name: string;
-  level: number;
-  stats: {
-    hp: number;
-    attack: number;
-    defense: number;
-    speed: number;
-    specialAttack: number;
-    specialDefense: number;
-  };
-  sprites: {
-    front_default: string;
-  };
-  moves: Move[];
-  selectedMoves: Move[];
-  types: { type: { name: string } }[];
-}
-
-interface Move {
-  name: string;
-  power: number | string;
-  type: string;
-}
+import { Difficulty, Pokemon } from "./types";
 
 interface PokemonTeamContextProps {
   playerTeam: Pokemon[];
@@ -60,7 +36,7 @@ export const PokemonTeamProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [playerTeam, setPlayerTeam] = useState<Pokemon[]>([]);
   const [opponentTeam, setOpponentTeam] = useState<Pokemon[]>([]);
-  const [difficulty, setDifficulty] = useState<Difficulty>("Easy"); // Corrected type
+  const [difficulty, setDifficulty] = useState<Difficulty>("Easy");
 
   const addPokemonToTeam = (
     team: Pokemon[],

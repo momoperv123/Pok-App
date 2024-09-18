@@ -1,4 +1,8 @@
+// /battle-simulator/start-battle/page.tsx
+
 "use client";
+
+export const dynamic = "force-dynamic";
 
 import React, { useState, useEffect } from "react";
 import { Move, Pokemon } from "../types";
@@ -8,17 +12,15 @@ import Background from "@/app/public/images/battle.png";
 
 export default function StartBattlePage() {
   const { playerTeam, opponentTeam } = usePokemonTeam();
-  const [currentPlayerTeam, setCurrentPlayerTeam] = useState([...playerTeam]);
-  const [currentOpponentTeam, setCurrentOpponentTeam] = useState([
-    ...opponentTeam,
-  ]);
-  const [playerPokemon, setPlayerPokemon] = useState(currentPlayerTeam[0]);
-  const [opponentPokemon, setOpponentPokemon] = useState(
-    currentOpponentTeam[0]
-  );
 
-  const [playerHP, setPlayerHP] = useState(playerPokemon?.stats?.hp ?? 0);
-  const [opponentHP, setOpponentHP] = useState(opponentPokemon?.stats?.hp ?? 0);
+  const [currentPlayerTeam, setCurrentPlayerTeam] = useState<Pokemon[]>([]);
+  const [currentOpponentTeam, setCurrentOpponentTeam] = useState<Pokemon[]>([]);
+  const [playerPokemon, setPlayerPokemon] = useState<Pokemon | null>(null);
+  const [opponentPokemon, setOpponentPokemon] = useState<Pokemon | null>(null);
+
+  const [playerHP, setPlayerHP] = useState<number>(0);
+  const [opponentHP, setOpponentHP] = useState<number>(0);
+
   const [battleText, setBattleText] = useState("A wild battle has begun!");
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [showSwitchMenu, setShowSwitchMenu] = useState(false);
@@ -27,33 +29,44 @@ export default function StartBattlePage() {
   const [endMessage, setEndMessage] = useState("");
 
   useEffect(() => {
-    if (playerHP <= 0) {
+    if (playerTeam && playerTeam.length > 0) {
+      setCurrentPlayerTeam([...playerTeam]);
+      setPlayerPokemon(playerTeam[0]);
+      setPlayerHP(playerTeam[0]?.stats?.hp ?? 0);
+    }
+    if (opponentTeam && opponentTeam.length > 0) {
+      setCurrentOpponentTeam([...opponentTeam]);
+      setOpponentPokemon(opponentTeam[0]);
+      setOpponentHP(opponentTeam[0]?.stats?.hp ?? 0);
+    }
+  }, [playerTeam, opponentTeam]);
+
+  useEffect(() => {
+    if (playerHP <= 0 && playerPokemon) {
       handlePlayerFaint();
-    } else if (opponentHP <= 0) {
+    } else if (opponentHP <= 0 && opponentPokemon) {
       handleOpponentFaint();
     }
   }, [playerHP, opponentHP]);
 
   const handleMoveSelect = (move: Move) => {
-    if (isPlayerTurn && playerPokemon && opponentPokemon) {
-      // Calculate damage with safety checks
-      // @ts-expect-error: Type mismatch with Pokemon types, ignoring for battle logic
+    if (
+      isPlayerTurn &&
+      playerPokemon &&
+      opponentPokemon &&
+      playerHP > 0 &&
+      opponentHP > 0
+    ) {
       const damage = calculateDamage(move, playerPokemon, opponentPokemon);
 
       if (!isNaN(damage)) {
         setOpponentHP((prevHP) => Math.max(prevHP - damage, 0));
 
-        const logEntry = `${playerPokemon?.name ?? "Unknown Pokémon"} uses ${
-          move.name
-        } for ${damage} points of damage on ${
-          opponentPokemon?.name ?? "Unknown Pokémon"
-        }`;
+        const logEntry = `${playerPokemon.name} uses ${move.name} for ${damage} points of damage on ${opponentPokemon.name}`;
         setMoveLog((prevLog) => [...prevLog, logEntry]);
         setBattleText(logEntry);
       } else {
-        const logEntry = `${
-          playerPokemon?.name ?? "Unknown Pokémon"
-        } missed the move!`;
+        const logEntry = `${playerPokemon.name} missed the move!`;
         setMoveLog((prevLog) => [...prevLog, logEntry]);
         setBattleText(logEntry);
       }
@@ -71,8 +84,7 @@ export default function StartBattlePage() {
   };
 
   const handleSwitchPokemon = (pokemon: Pokemon) => {
-    // @ts-expect-error: Type mismatch with Pokemon object during switch, ignoring for comparison logic
-    if (pokemon !== playerPokemon) {
+    if (pokemon !== playerPokemon && playerPokemon) {
       // Save the current HP of the Pokémon being switched out
       setCurrentPlayerTeam((prevTeam) =>
         prevTeam.map((p) =>
@@ -83,7 +95,6 @@ export default function StartBattlePage() {
       );
 
       // Switch to the new Pokémon and set its HP
-      // @ts-expect-error: Ignoring type mismatch for setting player Pokemon and HP
       setPlayerPokemon(pokemon);
       setPlayerHP(pokemon.stats.hp);
 
@@ -100,7 +111,7 @@ export default function StartBattlePage() {
   };
 
   const handlePlayerFaint = () => {
-    if (playerHP > 0) return;
+    if (playerHP > 0 || !playerPokemon) return;
 
     const logEntry = `${playerPokemon.name} fainted!`;
     setMoveLog((prevLog) => [...prevLog, logEntry]);
@@ -126,7 +137,7 @@ export default function StartBattlePage() {
   };
 
   const handleOpponentFaint = () => {
-    if (opponentHP > 0) return;
+    if (opponentHP > 0 || !opponentPokemon) return;
 
     const logEntry = `${opponentPokemon.name} fainted!`;
     setMoveLog((prevLog) => [...prevLog, logEntry]);
@@ -153,9 +164,11 @@ export default function StartBattlePage() {
   };
 
   const handleOpponentTurn = () => {
+    if (!opponentPokemon || !playerPokemon) return;
+
     const move = selectAIMove();
-    // @ts-expect-error: Type mismatch with Pokemon types, ignoring for battle logic
     const damage = calculateDamage(move, opponentPokemon, playerPokemon);
+
     if (!isNaN(damage)) {
       setPlayerHP((prevHP) => Math.max(prevHP - damage, 0));
       const logEntry = `${opponentPokemon.name} uses ${move.name} for ${damage} points of damage on ${playerPokemon.name}`;
@@ -167,6 +180,7 @@ export default function StartBattlePage() {
       setBattleText(logEntry);
     }
     setIsPlayerTurn(true);
+
     if (playerHP - damage <= 0) {
       setTimeout(() => {
         handlePlayerFaint();
@@ -175,10 +189,22 @@ export default function StartBattlePage() {
   };
 
   const selectAIMove = (): Move => {
-    // @ts-expect-error: Ignoring type mismatch for selecting a random move
-    return opponentPokemon.selectedMoves[
-      Math.floor(Math.random() * opponentPokemon.selectedMoves.length)
-    ];
+    if (
+      opponentPokemon &&
+      opponentPokemon.selectedMoves &&
+      opponentPokemon.selectedMoves.length > 0
+    ) {
+      const randomIndex = Math.floor(
+        Math.random() * opponentPokemon.selectedMoves.length
+      );
+      return opponentPokemon.selectedMoves[randomIndex];
+    }
+    // Default move if no moves are available
+    return {
+      name: "Struggle",
+      power: 50,
+      type: "physical",
+    };
   };
 
   const calculateDamage = (
@@ -211,6 +237,14 @@ export default function StartBattlePage() {
   const selectNewTeam = () => {
     window.location.href = "/battle-simulator/player-team-selection";
   };
+
+  if (!playerPokemon || !opponentPokemon) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-white text-xl">Loading battle...</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -308,10 +342,11 @@ export default function StartBattlePage() {
             <div className="grid grid-cols-2 gap-4">
               {isPlayerTurn &&
                 !showSwitchMenu &&
+                playerPokemon &&
+                playerPokemon.selectedMoves &&
                 playerPokemon.selectedMoves.map((move, index) => (
                   <button
                     key={index}
-                    // @ts-expect-error: Type mismatch with Move object, ignoring for move selection logic
                     onClick={() => handleMoveSelect(move)}
                     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                   >
@@ -332,7 +367,6 @@ export default function StartBattlePage() {
                 {currentPlayerTeam.map((pokemon, index) => (
                   <button
                     key={index}
-                    // @ts-expect-error: Type mismatch with Pokemon object during switch, ignoring for battle logic
                     onClick={() => handleSwitchPokemon(pokemon)}
                     className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
                     disabled={pokemon === playerPokemon}

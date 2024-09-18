@@ -1,3 +1,9 @@
+export interface Move {
+  name: string;
+  power: number | string;
+  type: string;
+}
+
 export interface Pokemon {
   id: number;
   name: string;
@@ -10,17 +16,12 @@ export interface Pokemon {
     specialAttack: number;
     specialDefense: number;
   };
-  type: string[];
+  types: { type: { name: string } }[];
   sprites: {
     front_default: string;
   };
+  moves: Move[];
   selectedMoves: Move[];
-}
-
-export interface Move {
-  name: string;
-  power: number;
-  type: string;
 }
 
 export type Difficulty = "Easy" | "Medium" | "Hard";
